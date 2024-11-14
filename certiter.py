@@ -2,7 +2,7 @@
 import torch.utils.data
 import numpy as np
 from dataset import HairDataset
-from backbone import VGG19
+from transformer import VGG19
 from loss import CalculateLoss
 import cv2
 

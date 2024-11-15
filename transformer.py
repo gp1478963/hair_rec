@@ -1,6 +1,30 @@
 import torch
 from torch import nn
 
+
+class Classifier(nn.Module):
+    def __init__(self, dimension=768, n_classes=4):
+        super(Classifier, self).__init__()
+        self.n_classes = n_classes
+        self.dimension = dimension
+        self.classifier = MultilayerPerceptron(feature=[dimension, dimension, n_classes])
+
+    def forward(self, x):
+        x = self.classifier(x)
+        return x[:,0]
+
+
+class BoxRegress(nn.Module):
+    def __init__(self, dimension=768):
+        super(BoxRegress, self).__init__()
+        self.dimension = dimension
+        self.boxes = MultilayerPerceptron(feature=[dimension, dimension, 4])
+
+    def forward(self, x):
+        x = self.boxes(x)
+        return x
+
+
 class PositionEmbedding(nn.Module):
     def __init__(self, embedding_size=768, patch_count = 64):
         super(PositionEmbedding, self).__init__()
@@ -87,6 +111,7 @@ class MultilayerPerceptron(nn.Module):
         self.layers = nn.Sequential()
         self.activation = nn.ReLU() if activation is None else activation
         for index in range(len(self.feature)-1):
+
             self.layers.append(nn.Linear(self.feature[index], self.feature[index+1]))
             self.layers.append(self.activation)
             self.layers.append(nn.Dropout(drop_rate))
@@ -130,8 +155,11 @@ class TransformerEncoder(nn.Module):
         self.num_layers = num_layers
         self.input_embedding = InputEmbedding(image_size=input_size, patch_size=patch_size, embedding_size=dimension)
         self.encoder = Decoder(dimension, layer_count)
-
+        self.classifier = Classifier()
+        self.softmax = nn.Softmax(dim=-1)
     def forward(self, x):
         x = self.input_embedding(x)
         x = self.encoder(x)
+        x = self.classifier(x)
+        x = self.softmax(x)
         return x

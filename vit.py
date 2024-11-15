@@ -4,11 +4,10 @@ from dataset import HairDataset
 from transformer import TransformerEncoder
 from loss import CalculateLoss
 import cv2
-from head import Classifier
 csv_path = './data/hair_class.csv'
 BATCH_SIZE = 4
 EPOCH_COUNT = 50
-LR = 1e-4
+LR = 1e-5
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -22,11 +21,9 @@ def transform(image, label):
 if __name__ == '__main__':
 
     model = TransformerEncoder()
-    classifier = Classifier()
     criterion = CalculateLoss()
     model = model.to(device)
     criterion.to(device)
-    classifier.to(device)
 
 
     hair_dataset = HairDataset(csv_path, transform=transform)
@@ -40,7 +37,6 @@ if __name__ == '__main__':
             image = image.to(device)
             label = label.to(device)
             output = model(image)
-            output = classifier(output)
             loss = criterion(output, label)
             print('Epoch:{} Current loss: {:.6f}'.format(epoch ,loss.item()))
             loss_total += loss.item()

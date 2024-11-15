@@ -53,13 +53,13 @@ class InputEmbedding(nn.Module):
         self.patch_count_one_side = image_size//patch_size
         self.patch_embedding = nn.Conv2d(in_channels=3, out_channels=embedding_size, kernel_size=self.patch_size, stride=self.patch_size)
         self.cls_embedding = ClassEmbedding(embedding_size=embedding_size)
-        self.pos_embedding = PositionEmbedding(embedding_size=embedding_size, patch_count=self.patch_count_one_side*self.patch_count_one_side)
+        self.pos_embedding = PositionEmbedding(embedding_size=embedding_size, patch_count=self.patch_count_one_side*self.patch_count_one_side + 1)
 
     def forward(self, x):
         x = self.patch_embedding(x) # x.shape->(B,N,P,P)
         x = x.flatten(2).transpose(1, 2) # x.shape->(B,N,P2)->(B,P2,N)
-        x = self.pos_embedding(x)
         x = self.cls_embedding(x)
+        x = self.pos_embedding(x)
         return x
 
 class Attention(nn.Module):

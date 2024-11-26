@@ -2,7 +2,7 @@
 import torch.utils.data
 import numpy as np
 from dataset import HairDataset
-from transformer import VGG19
+from VGG import VGG19
 from loss import CalculateLoss
 import cv2
 
@@ -22,9 +22,9 @@ def bitmap_convert_label(bitmap):
 
 if __name__ == '__main__':
 
-    model = VGG19(n_class=4)
+    model = VGG19(n_class=5)
     model_dict = model.state_dict()
-    model_dict_w = torch.load('./checkpoints/vgg19.pth')
+    model_dict_w = torch.load('./checkpoints/VGG19_100_35.pth')
     for k, v in model_dict.items():
         if k in model_dict_w:
             model_dict[k].copy_(model_dict_w[k])

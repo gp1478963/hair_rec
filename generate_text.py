@@ -5,7 +5,7 @@ import pandas as pd
 
 if __name__ == '__main__':
     data = pd.DataFrame()
-    data_folder = 'D:\dataset\hair\data'
+    data_folder = './hair/data'
     sub_dir = os.scandir(data_folder)
     sub_dir = [entry.name for entry in sub_dir]
     aggregate = []

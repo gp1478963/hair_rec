@@ -16,7 +16,7 @@ class HairDataset(data.Dataset):
         return self.counter
 
     def convert_label(self, label):
-        bitmap = np.zeros(4,dtype=np.float32)
+        bitmap = np.zeros(5,dtype=np.float32)
         bitmap[label-1] = 1
         return bitmap
 
